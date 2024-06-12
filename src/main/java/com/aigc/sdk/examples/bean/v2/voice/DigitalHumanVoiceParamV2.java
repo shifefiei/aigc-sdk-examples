@@ -18,16 +18,17 @@ public class DigitalHumanVoiceParamV2 implements Serializable {
     private Integer voicePackageFileId;
 
     /**
-     * web页面任务详情页展示使用
+     * 以下参数供：web页面任务详情页展示使用,如果要传值，请保持和试听接口传参一致
      */
-    private Integer prosodyRate = 0;
-    private Integer prosodyPitch = 0;
+    private Integer prosodyRate;
+    private Integer prosodyPitch;
+    private String voiceName = "";
     private String style;
     private String styleName;
     private String copyContent;
     // languageType 是语音列表返回的，对应视频提交接口的：languageCategory
     private String languageType = "";
     // 对应的是发音人名称
-    private String voiceName = "";
+
 }
 

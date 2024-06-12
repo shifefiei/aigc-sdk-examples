@@ -80,10 +80,11 @@ public class MainVideoBackgroundTestV2 {
         // 生成数字人视频
         DigitalHumanVideoAddRequestV2 request = new DigitalHumanVideoAddRequestV2();
         request.setTaskName("API-V2" + new Random().nextInt(10));
-        request.setAspectRatio("16:9");
+        request.setAspectRatio("9:16");
 
         this.createVideoAddRequest(voiceListV2.get(0), voiceAuditionResponse, avatarResponse, backgroundElement, request);
-        request.getDigitalHuman().setMaskType(MaskTypeEnum.CIRCLE.getCode());
+        //request.getDigitalHuman().setMaskType(MaskTypeEnum.CIRCLE.getCode());
+        System.out.println("视频提交请求入参："+JacksonUtil.toJSONString(request));
 
         DigitalHumanVideoAddResponse response = this.submitDigitalHumanTask(request);
         System.out.println(response);
