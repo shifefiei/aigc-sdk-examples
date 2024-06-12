@@ -132,6 +132,10 @@ public class MainVideoBackgroundTestV2 {
         backgroundParamV2.setWidth(backgroundElement.getWidth());
         backgroundParamV2.setBackgroundThumbnailUrl(backgroundElement.getBackgroundThumbnailUrl());
 
+        // 绿幕背景视频设置
+        //backgroundParamV2.setBackgroundColor("rgb,0,255,0");
+        //backgroundParamV2.setBackgroundType(302);
+
         request.setBackgroundParam(backgroundParamV2);
 
         if (voiceItem.getIsSystem() != 1) {
