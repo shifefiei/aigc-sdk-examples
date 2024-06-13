@@ -3,6 +3,7 @@ package com.aigc.sdk.examples.test.v2;
 import com.aigc.sdk.examples.bean.v1.avatar.DigitalHumanAvatarListResponse;
 import com.aigc.sdk.examples.bean.v1.video.DigitalHumanVideoAddResponse;
 import com.aigc.sdk.examples.bean.v1.voice.DigitalHumanVoiceAuditionResponse;
+import com.aigc.sdk.examples.bean.v1.voice.UploadFileResponse;
 import com.aigc.sdk.examples.bean.v2.DigitalHumanParamV2;
 import com.aigc.sdk.examples.bean.v2.DigitalHumanVideoAddRequestV2;
 import com.aigc.sdk.examples.bean.v2.background.BackgroundElementRequestV2;
@@ -13,6 +14,7 @@ import com.aigc.sdk.examples.common.CommonConstant;
 import com.aigc.sdk.examples.common.MaskTypeEnum;
 import com.aigc.sdk.examples.config.OkHttpConfig;
 import com.aigc.sdk.examples.test.v1.MainAvatarDemoTest;
+import com.aigc.sdk.examples.test.v1.MainVoiceDemoTest;
 import com.aigc.sdk.examples.util.JacksonUtil;
 import com.aigc.sdk.examples.util.OkHttpUtil;
 import com.alibaba.fastjson.JSON;
@@ -33,11 +35,11 @@ public class MainVideoBackgroundTestV2 {
 
 
     private static Logger log = LoggerFactory.getLogger(MainVideoBackgroundTestV2.class);
+    private static OkHttpUtil okHttpUtil = new OkHttpUtil(OkHttpConfig.getClient());
+    private static final String ASPECT_RATIO = "9:16";
 
     private MainAvatarDemoTest mainAvatarDemo = new MainAvatarDemoTest();
-
-    private static final String ASPECT_RATIO = "9:16";
-    private static OkHttpUtil okHttpUtil = new OkHttpUtil(OkHttpConfig.getClient());
+    private MainVoiceDemoTest mainVoiceDemo = new MainVoiceDemoTest();
 
     private static String submitTaskUrl = CommonConstant.HOST + "/apis/digitalhuman/video/v2/add";
     private static String getBackgroundUrl = CommonConstant.HOST + "/apis/digitalhuman/background/v2/backgroundList";
@@ -84,7 +86,37 @@ public class MainVideoBackgroundTestV2 {
 
         this.createVideoAddRequest(voiceListV2.get(0), voiceAuditionResponse, avatarResponse, backgroundElement, request);
         //request.getDigitalHuman().setMaskType(MaskTypeEnum.CIRCLE.getCode());
-        System.out.println("视频提交请求入参："+JacksonUtil.toJSONString(request));
+        System.out.println("视频提交请求入参：" + JacksonUtil.toJSONString(request));
+
+        DigitalHumanVideoAddResponse response = this.submitDigitalHumanTask(request);
+        System.out.println(response);
+    }
+
+    /**
+     * 上传自定义音频驱动照片数字人说话
+     */
+    @Test
+    public void testUploadVoicePhotoVideoV2() {
+
+        // 音频驱动
+        UploadFileResponse uploadCustomVoice = mainVoiceDemo.getUploadCustomVoiceV1();
+        DigitalHumanVoiceAuditionResponse voiceAuditionResponse = new DigitalHumanVoiceAuditionResponse();
+        voiceAuditionResponse.setFileId(uploadCustomVoice.getFileId());
+
+        // 数字人形象
+        Integer humanId = 5;
+        DigitalHumanAvatarListResponse avatarResponse = mainAvatarDemo.getAvatarListV1(101, humanId);
+
+        // 获取视频背景
+        List<BackgroundElementResponseV2> backgroundElementList = getBackgroundElementResponseV2();
+        BackgroundElementResponseV2 backgroundElement = backgroundElementList.get(1);
+
+        // 生成数字人视频
+        DigitalHumanVideoAddRequestV2 request = new DigitalHumanVideoAddRequestV2();
+        request.setTaskName(ASPECT_RATIO + "API-Upload-Voice" + new Random().nextInt(10));
+        request.setAspectRatio(ASPECT_RATIO);
+
+        this.createVideoAddRequest(new VoiceInfoResponseV2(), voiceAuditionResponse, avatarResponse, backgroundElement, request);
 
         DigitalHumanVideoAddResponse response = this.submitDigitalHumanTask(request);
         System.out.println(response);
@@ -111,18 +143,26 @@ public class MainVideoBackgroundTestV2 {
         voiceParam.setCopyContent(CommonConstant.text);
         voiceParam.setVoicePackageDuration(voiceAuditionResponse.getFileDuration());
         voiceParam.setVoicePackageFileId(voiceAuditionResponse.getFileId());
-
-        VoiceItemV2 voiceItem = responseV2.getVoices().get(0);
         voiceParam.setLanguageType(responseV2.getLanguageType());
-        voiceParam.setVoiceName(voiceItem.getName());
 
-        List<AzureVoiceStyleParamV2> voiceStyles = voiceItem.getVoiceStyles();
-        if (!CollectionUtils.isEmpty(voiceStyles)) {
-            AzureVoiceStyleParamV2 azureVoiceStyleParamV2 = voiceStyles.get(0);
-            voiceParam.setStyle(azureVoiceStyleParamV2.getStyle());
-            voiceParam.setStyleName(azureVoiceStyleParamV2.getStyleName());
+        List<VoiceItemV2> voices = responseV2.getVoices();
+        if (!CollectionUtils.isEmpty(voices)) {
+            VoiceItemV2 voiceItem = voices.get(0);
+            voiceParam.setVoiceName(voiceItem.getName());
+            List<AzureVoiceStyleParamV2> voiceStyles = voiceItem.getVoiceStyles();
+            if (!CollectionUtils.isEmpty(voiceStyles)) {
+                AzureVoiceStyleParamV2 azureVoiceStyleParamV2 = voiceStyles.get(0);
+                voiceParam.setStyle(azureVoiceStyleParamV2.getStyle());
+                voiceParam.setStyleName(azureVoiceStyleParamV2.getStyleName());
+            }
+            voiceParam.setIsSystem(voiceItem.getIsSystem());
+
+            if (voiceItem.getIsSystem() != 1) {
+                voiceParam.setVoiceName(voiceItem.getName());
+            }
+        } else {
+            voiceParam.setIsSystem(0);
         }
-        voiceParam.setIsSystem(voiceItem.getIsSystem());
 
         // 设置背景信息
         DigitalHumanBackgroundParamV2 backgroundParamV2 = new DigitalHumanBackgroundParamV2();
@@ -138,11 +178,6 @@ public class MainVideoBackgroundTestV2 {
         //backgroundParamV2.setBackgroundType(302);
 
         request.setBackgroundParam(backgroundParamV2);
-
-        if (voiceItem.getIsSystem() != 1) {
-            voiceParam.setVoiceName(voiceItem.getName());
-        }
-
     }
 
     public DigitalHumanVideoAddResponse submitDigitalHumanTask(DigitalHumanVideoAddRequestV2 humanTask) {
