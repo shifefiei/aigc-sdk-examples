@@ -44,7 +44,7 @@ public class MainAvatarDemoTest {
     public void testAvatarList() {
         DigitalHumanAvatarListRequest req = new DigitalHumanAvatarListRequest();
         req.setSupportTypeId(101);
-        req.setDigitalHumanId(5);
+        req.setPageSize(1000);
 
         // req.setAreaTypeId(140);
         //req.setTagIds(Lists.newArrayList(211));

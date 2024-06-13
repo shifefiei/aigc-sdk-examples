@@ -6,6 +6,8 @@ import com.aigc.sdk.examples.bean.v1.voice.DigitalHumanVoiceAuditionResponse;
 import com.aigc.sdk.examples.bean.v1.voice.UploadFileResponse;
 import com.aigc.sdk.examples.bean.v2.DigitalHumanParamV2;
 import com.aigc.sdk.examples.bean.v2.DigitalHumanVideoAddRequestV2;
+import com.aigc.sdk.examples.bean.v2.avatar.DigitalHumanAvatarListRequestV2;
+import com.aigc.sdk.examples.bean.v2.avatar.DigitalHumanAvatarListResponseV2;
 import com.aigc.sdk.examples.bean.v2.background.BackgroundElementRequestV2;
 import com.aigc.sdk.examples.bean.v2.background.BackgroundElementResponseV2;
 import com.aigc.sdk.examples.bean.v2.background.DigitalHumanBackgroundParamV2;
@@ -45,6 +47,7 @@ public class MainVideoBackgroundTestV2 {
     private static String getBackgroundUrl = CommonConstant.HOST + "/apis/digitalhuman/background/v2/backgroundList";
 
     private MainVoiceTestV2 mainVoiceTestV2 = new MainVoiceTestV2();
+    private MainAvatarTestV2 mainAvatarTestV2 = new MainAvatarTestV2();
 
     /**
      * 获取视频背景列表
@@ -122,6 +125,48 @@ public class MainVideoBackgroundTestV2 {
         System.out.println(response);
     }
 
+    /**
+     * 提交克隆视频背景任务
+     */
+    @Test
+    public void test9To16CloneDigitalVideo() {
+
+        // 语音列表
+        LanguageVoiceListRequestV2 requestV2 = new LanguageVoiceListRequestV2();
+        requestV2.setLanguage("Chinese");
+        requestV2.setIsSystem(1);
+        List<VoiceInfoResponseV2> voiceListV2 = mainVoiceTestV2.getVoiceListV2(requestV2, 21);
+
+        // 语音试听
+        DigitalHumanVoiceAuditionRequestV2 audition = new DigitalHumanVoiceAuditionRequestV2();
+        DigitalHumanVoiceAuditionResponse voiceAuditionResponse = mainVoiceTestV2.tryToListenAudioFileV2(voiceListV2.get(0), audition);
+
+        // 克隆数字人形象
+        DigitalHumanAvatarListRequestV2 req = new DigitalHumanAvatarListRequestV2();
+        req.setSupportTypeId(101);
+        req.setCloneDigitalHuman(1);
+        req.setPageSize(1000);
+
+        List<DigitalHumanAvatarListResponseV2> avatarList = mainAvatarTestV2.getAvatarList(req);
+        DigitalHumanAvatarListResponseV2 avatarResponse = avatarList.get(116);
+
+        // 获取视频背景
+        List<BackgroundElementResponseV2> backgroundElementList = getBackgroundElementResponseV2();
+        BackgroundElementResponseV2 backgroundElement = backgroundElementList.get(1);
+
+        // 生成数字人视频
+        DigitalHumanVideoAddRequestV2 request = new DigitalHumanVideoAddRequestV2();
+        request.setTaskName("API-V2-clone" + new Random().nextInt(10));
+        request.setAspectRatio("9:16");
+
+        this.createCloneVideoAddRequest(voiceListV2.get(0), voiceAuditionResponse, avatarResponse, backgroundElement, request);
+        //request.getDigitalHuman().setMaskType(MaskTypeEnum.CIRCLE.getCode());
+        System.out.println("视频提交请求入参：" + JacksonUtil.toJSONString(request));
+
+        DigitalHumanVideoAddResponse response = this.submitDigitalHumanTask(request);
+        System.out.println(response);
+    }
+
     private void createVideoAddRequest(VoiceInfoResponseV2 responseV2,
                                        DigitalHumanVoiceAuditionResponse voiceAuditionResponse,
                                        DigitalHumanAvatarListResponse avatarResponse,
@@ -180,6 +225,67 @@ public class MainVideoBackgroundTestV2 {
 
         request.setBackgroundParam(backgroundParamV2);
     }
+
+
+    private void createCloneVideoAddRequest(VoiceInfoResponseV2 responseV2,
+                                            DigitalHumanVoiceAuditionResponse voiceAuditionResponse,
+                                            DigitalHumanAvatarListResponseV2 avatarResponse,
+                                            BackgroundElementResponseV2 backgroundElement,
+                                            DigitalHumanVideoAddRequestV2 request) {
+        // 设置数字人信息
+        DigitalHumanParamV2 humanParam = new DigitalHumanParamV2();
+        request.setDigitalHuman(humanParam);
+        humanParam.setDigitalHumanId(avatarResponse.getDigitalHumanId());
+        humanParam.setDigitalHumanThumbnailId(avatarResponse.getDigitalHumanThumbnailId());
+        humanParam.setDigitalHumanPhotoId(avatarResponse.getDigitalHumanPhotoId());
+        humanParam.setMaskType(MaskTypeEnum.NO_MASK.getCode());
+        humanParam.setSupportTypeId(avatarResponse.getSupportTypeId());
+
+        // 设置语音信息
+        DigitalHumanVoiceParamV2 voiceParam = new DigitalHumanVoiceParamV2();
+        request.setDigitalHumanVoice(voiceParam);
+
+        voiceParam.setCopyContent(CommonConstant.text);
+        voiceParam.setVoicePackageDuration(voiceAuditionResponse.getFileDuration());
+        voiceParam.setVoicePackageFileId(voiceAuditionResponse.getFileId());
+        voiceParam.setLanguageType(responseV2.getLanguageType());
+
+        List<VoiceItemV2> voices = responseV2.getVoices();
+        // 上传音频时没有音色相关的信息，所以这里需要判断下音色是否为空
+        if (!CollectionUtils.isEmpty(voices)) {
+            VoiceItemV2 voiceItem = voices.get(0);
+            voiceParam.setVoiceName(voiceItem.getName());
+            List<AzureVoiceStyleParamV2> voiceStyles = voiceItem.getVoiceStyles();
+            if (!CollectionUtils.isEmpty(voiceStyles)) {
+                AzureVoiceStyleParamV2 azureVoiceStyleParamV2 = voiceStyles.get(0);
+                voiceParam.setStyle(azureVoiceStyleParamV2.getStyle());
+                voiceParam.setStyleName(azureVoiceStyleParamV2.getStyleName());
+            }
+            voiceParam.setIsSystem(voiceItem.getIsSystem());
+
+            if (voiceItem.getIsSystem() != 1) {
+                voiceParam.setVoiceName(voiceItem.getName());
+            }
+        } else {
+            voiceParam.setIsSystem(0);
+        }
+
+        // 设置背景信息
+        DigitalHumanBackgroundParamV2 backgroundParamV2 = new DigitalHumanBackgroundParamV2();
+        backgroundParamV2.setBackgroundUrl(backgroundElement.getBackgroundUrl());
+        backgroundParamV2.setBackgroundType(backgroundElement.getBackgroundType());
+        backgroundParamV2.setUploadWay(1);
+        backgroundParamV2.setHeight(backgroundElement.getHeight());
+        backgroundParamV2.setWidth(backgroundElement.getWidth());
+        backgroundParamV2.setBackgroundThumbnailUrl(backgroundElement.getBackgroundThumbnailUrl());
+
+        // 绿幕背景视频设置
+        //backgroundParamV2.setBackgroundColor("rgb,0,255,0");
+        //backgroundParamV2.setBackgroundType(302);
+
+        request.setBackgroundParam(backgroundParamV2);
+    }
+
 
     public DigitalHumanVideoAddResponse submitDigitalHumanTask(DigitalHumanVideoAddRequestV2 humanTask) {
 
