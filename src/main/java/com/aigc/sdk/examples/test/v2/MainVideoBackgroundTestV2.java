@@ -148,7 +148,7 @@ public class MainVideoBackgroundTestV2 {
         req.setPageSize(1000);
 
         List<DigitalHumanAvatarListResponseV2> avatarList = mainAvatarTestV2.getAvatarList(req);
-        DigitalHumanAvatarListResponseV2 avatarResponse = avatarList.get(116);
+        DigitalHumanAvatarListResponseV2 avatarResponse = avatarList.get(1);
 
         // 获取视频背景
         List<BackgroundElementResponseV2> backgroundElementList = getBackgroundElementResponseV2();
