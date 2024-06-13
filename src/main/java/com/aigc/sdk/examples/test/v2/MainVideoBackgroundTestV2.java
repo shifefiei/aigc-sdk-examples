@@ -146,6 +146,7 @@ public class MainVideoBackgroundTestV2 {
         voiceParam.setLanguageType(responseV2.getLanguageType());
 
         List<VoiceItemV2> voices = responseV2.getVoices();
+        // 上传音频时没有音色相关的信息，所以这里需要判断下音色是否为空
         if (!CollectionUtils.isEmpty(voices)) {
             VoiceItemV2 voiceItem = voices.get(0);
             voiceParam.setVoiceName(voiceItem.getName());

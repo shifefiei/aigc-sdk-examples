@@ -114,6 +114,33 @@ public class MainVoiceTestV2 {
         }
     }
 
+    // 克隆音色音色
+    @Test
+    public void testCloneListenAudioFileV2() {
+        DigitalHumanVoiceAuditionRequestV2 audition = new DigitalHumanVoiceAuditionRequestV2();
+        audition.setIsSystem(0);
+        audition.setContent(CommonConstant.text);
+        audition.setLanguageType("Chinese (Mandarin, Simplified) - 普通话");
+        audition.setVoiceId("S_3JPg5aMP");
+        audition.setVoiceType(4);
+
+        String param = JSON.toJSONString(audition);
+        log.info(" tryToListenAudioFileV2 param , param = {} ", param);
+
+        String auditionResult = okHttpUtil.doPostJson(auditionUrl, param);
+        JSONObject auditionJsonObject = JSONObject.parseObject(auditionResult);
+        if (!"200".equals(auditionJsonObject.getString("code"))) {
+            log.error(" tryToListenAudioFileV2 error , msg = {} ", auditionResult);
+            return;
+        }
+
+        log.info("试听文件返回结果：{}", auditionResult);
+
+        String auditionData = auditionJsonObject.getString("data");
+        DigitalHumanVoiceAuditionResponse voiceAuditionResponse = JSON.parseObject(auditionData, DigitalHumanVoiceAuditionResponse.class);
+        System.out.println("试听结果：" + JacksonUtil.toJSONString(voiceAuditionResponse));
+    }
+
 
     public DigitalHumanVoiceAuditionResponse tryToListenAudioFileV2(VoiceInfoResponseV2 responseV2, DigitalHumanVoiceAuditionRequestV2 audition) {
 
