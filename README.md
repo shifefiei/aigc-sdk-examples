@@ -14,6 +14,9 @@ Code examples for each test cases can be found within the following subdirectori
 - [MainVideoBackgroundTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainVideoBackgroundTestV2.java)
 - [MainVoiceTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainVoiceTestV2.java)
 - [MainAvatarTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainAvatarTestV2.java)
+- [MainImageBackgroundTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainImageBackgroundTestV2.java)
+- [MainSpeedCloningUploadVideoTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainSpeedCloningUploadVideoTestV2.java)
+- [MainAiCopywritingTestV2](https://github.com/shifefiei/aigc-sdk-examples/blob/master/src/main/java/com/aigc/sdk/examples/test/v2/MainAiCopywritingTestV2.java)
 
 
 # Copyright and license

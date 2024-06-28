@@ -2,6 +2,7 @@ package com.aigc.sdk.examples.bean.v2;
 
 import com.aigc.sdk.examples.bean.v2.background.DigitalHumanBackgroundParamV2;
 import com.aigc.sdk.examples.bean.v2.voice.DigitalHumanVoiceParamV2;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@Data
 public class DigitalHumanVideoAddRequestV2 implements Serializable {
 
     private String taskName;

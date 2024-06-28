@@ -40,7 +40,7 @@ public class MainVoiceTestV2 {
     public void testVoiceList() {
         LanguageVoiceListRequestV2 requestV2 = new LanguageVoiceListRequestV2();
         requestV2.setLanguage("Chinese");
-        requestV2.setIsSystem(1);
+        requestV2.setIsSystem(0);
         List<VoiceInfoResponseV2> voiceListV2 = getVoiceListV2(requestV2, 0);
         System.out.println(JSON.toJSONString(voiceListV2));
     }
