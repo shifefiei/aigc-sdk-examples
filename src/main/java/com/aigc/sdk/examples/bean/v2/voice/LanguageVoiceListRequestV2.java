@@ -14,4 +14,18 @@ public class LanguageVoiceListRequestV2 implements Serializable {
     // 是否为系统音色 1:是,0:否
     private Integer isSystem;
 
+    /**
+     * Female - 女
+     * Male - 男
+     */
+    private String gender;
+
+    /**
+     * children - 儿童
+     * young - 青年
+     * middle aged - 中年
+     * old - 老年
+     */
+    private String ageGroup;
+
 }
