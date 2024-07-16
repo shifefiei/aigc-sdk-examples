@@ -26,4 +26,7 @@ public class DigitalHumanAvatarListRequestV2 extends PageRequest {
     // 欧美-141，亚裔-140，日韩-142，东南亚-143，印度-145，中东-144，非洲-146
     private Integer areaTypeId;
 
+    // 数字人全身照
+    private String digitalHumanPhotoUrl;
+
 }

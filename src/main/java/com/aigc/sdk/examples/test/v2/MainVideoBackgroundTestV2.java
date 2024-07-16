@@ -298,16 +298,16 @@ public class MainVideoBackgroundTestV2 {
 
         // 设置背景信息
         DigitalHumanBackgroundParamV2 backgroundParamV2 = new DigitalHumanBackgroundParamV2();
-//        backgroundParamV2.setBackgroundUrl(backgroundElement.getBackgroundUrl());
-//        backgroundParamV2.setBackgroundType(backgroundElement.getBackgroundType());
-//        backgroundParamV2.setUploadWay(1);
-//        backgroundParamV2.setHeight(backgroundElement.getHeight());
-//        backgroundParamV2.setWidth(backgroundElement.getWidth());
-//        backgroundParamV2.setBackgroundThumbnailUrl(backgroundElement.getBackgroundThumbnailUrl());
+        backgroundParamV2.setBackgroundUrl(backgroundElement.getBackgroundUrl());
+        backgroundParamV2.setBackgroundType(backgroundElement.getBackgroundType());
+        backgroundParamV2.setUploadWay(1);
+        backgroundParamV2.setHeight(backgroundElement.getHeight());
+        backgroundParamV2.setWidth(backgroundElement.getWidth());
+        backgroundParamV2.setBackgroundThumbnailUrl(backgroundElement.getBackgroundThumbnailUrl());
 
         // 绿幕背景视频设置
-        backgroundParamV2.setBackgroundColor("rgb,0,255,0");
-        backgroundParamV2.setBackgroundType(302);
+        //backgroundParamV2.setBackgroundColor("rgb,0,255,0");
+        //backgroundParamV2.setBackgroundType(302);
 
         request.setBackgroundParam(backgroundParamV2);
     }

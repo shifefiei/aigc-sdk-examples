@@ -17,4 +17,7 @@ public class DigitalHumanAvatarListResponse implements Serializable {
 
     private Integer digitalHumanPhotoId;
 
+    // 数字人全身照
+    private String digitalHumanPhotoUrl;
+
 }

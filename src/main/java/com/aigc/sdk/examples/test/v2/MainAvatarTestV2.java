@@ -26,7 +26,7 @@ public class MainAvatarTestV2 {
     public void testAvatarList() {
         DigitalHumanAvatarListRequestV2 req = new DigitalHumanAvatarListRequestV2();
         req.setSupportTypeId(100);
-        req.setCloneDigitalHuman(1);
+        req.setCloneDigitalHuman(0);
         req.setPageSize(1000);
 
         // req.setAreaTypeId(140);
@@ -34,7 +34,7 @@ public class MainAvatarTestV2 {
 
         List<DigitalHumanAvatarListResponseV2> avatarList = getAvatarList(req);
         System.out.println("==========================");
-        System.out.println(avatarList);
+        System.out.println(avatarList.get(0));
     }
 
     public List<DigitalHumanAvatarListResponseV2> getAvatarList(DigitalHumanAvatarListRequestV2 request) {

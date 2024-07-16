@@ -5,6 +5,7 @@ import com.aigc.sdk.examples.bean.v1.voice.UploadFileResponse;
 import com.aigc.sdk.examples.common.CommonConstant;
 import com.aigc.sdk.examples.config.OkHttpConfig;
 import com.aigc.sdk.examples.util.FileUtil;
+import com.aigc.sdk.examples.util.JacksonUtil;
 import com.aigc.sdk.examples.util.OkHttpUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -43,7 +44,7 @@ public class MainAvatarDemoTest {
     @Test
     public void testAvatarList() {
         DigitalHumanAvatarListRequest req = new DigitalHumanAvatarListRequest();
-        req.setSupportTypeId(101);
+        req.setSupportTypeId(100);
         req.setPageSize(1000);
 
         // req.setAreaTypeId(140);
@@ -51,7 +52,7 @@ public class MainAvatarDemoTest {
 
         List<DigitalHumanAvatarListResponse> avatarList = getAvatarList(req);
         System.out.println("==========================");
-        System.out.println(avatarList);
+        System.out.println(JacksonUtil.toJSONString(avatarList));
     }
 
     /**
@@ -80,12 +81,17 @@ public class MainAvatarDemoTest {
     public void testGetUploadAvatarStatusV1() {
         String fileUrl = "https://creative-aigc-test.s3.ap-southeast-1.amazonaws.com/test/lin.jpg";
         //UploadFileResponse response = getUploadAvatarFileV1(fileUrl);
-        Integer uploadAvatarStatus = getUploadAvatarStatusV1(1132522);
+        Integer uploadAvatarStatus = getUploadAvatarStatusV1(1161066);
 
         //  PROCESSING("0", "处理中"),SUCCESS("1", "处理成功"), FAIL("2", "处理失败"),TIMEOUT("3", "处理超时");
         System.out.println(uploadAvatarStatus);
     }
 
+    @Test
+    public void testQueryUploadHuman(){
+        DigitalHumanMsgResponse photoDigital = getPhotoDigitalHumanId(1161068);
+        System.out.println(photoDigital);
+    }
 
     /**
      * 测试上传照片并查询照片ID和数字人ID的关系
@@ -151,7 +157,7 @@ public class MainAvatarDemoTest {
 
         FacedetectionStatusResp facedetectionStatusResp = JSONObject.parseObject(data, FacedetectionStatusResp.class);
         System.out.println("FacedetectionStatusResp result : " + JSONObject.toJSONString(facedetectionStatusResp));
-        return facedetectionStatusResp.getFileId();
+        return facedetectionStatusResp.getStatus();
     }
 
     public List<DigitalHumanAvatarListResponse> getAvatarList(DigitalHumanAvatarListRequest request) {
